@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: eO6@^7dK5Gb25zQTQV50HU87L
+      POSTGRES_USER: postgres
+      POSTGRES_DB: papyrus
+    ports:
+      - 5434:5432

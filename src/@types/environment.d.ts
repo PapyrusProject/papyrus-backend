@@ -5,6 +5,7 @@ export declare global {
       DATABASE_URL: string
       PROJECT_NAME: string
       PROJECT_VERSION: number
+      JWT_SECRET: string
     }
   }
 }
