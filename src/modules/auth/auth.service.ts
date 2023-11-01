@@ -3,7 +3,7 @@ import { compareSync, hashSync } from 'bcrypt';
 import { RegisterDTO } from './RegisterDTO';
 import { LoginDTO } from './LoginDTO';
 import { sign } from 'jsonwebtoken';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaService } from '../../services/prisma.service';
 
 @Injectable()
 export class AuthService {
