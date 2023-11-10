@@ -16,10 +16,7 @@ model User {
   username String @unique
   password String
 
-  UserWorkSpaces     UserWorkSpaces[]
-  UserPages          UserPages[]
-  UserWorkSpaceBlock UserWorkSpaceBlock[]
-  UserWorkSpaceTasks UserWorkSpaceTasks[]
+  UserWorkSpaces Folder[]
 
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
@@ -27,123 +24,39 @@ model User {
   @@map("users")
 }
 
-model UserWorkSpaces {
-  id          String   @id @default(uuid())
-  user_id     String
-  members_id  String[]
-  workpace_id String
+enum FolderStatus {
+  created
+  deleted
+}
 
-  User               User                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  UserPages          UserPages[]
-  UserWorkSpaceBlock UserWorkSpaceBlock[]
+model Folder {
+  id     String @id @default(uuid())
+  userId String
+  name   String
+
+  status FolderStatus @default(created)
+
+  User  User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  files File[]
 
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
 
-  @@map("user_workspaces")
+  SubFolderRelation SubFolderRelation[]
 }
 
-model UserPages {
-  id           String @id @default(uuid())
-  title        String
-  user_id      String
-  page_id      String
-  workspace_id String
+model SubFolderRelation {
+  containerId  String   @id
+  subFolderIds String[]
 
-  User               User                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Workspace          UserWorkSpaces       @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Tasks              UserWorkSpaceTasks[]
-  UserWorkSpaceBlock UserWorkSpaceBlock[]
-  UserTable          UserTable[]
-
-  @@map("user_pages")
+  containerFolder Folder @relation(fields: [containerId], references: [id], onDelete: Cascade)
 }
 
-model UserWorkSpaceBlock {
-  id           String        @id @default(uuid())
-  content      String
-  user_id      String
-  workspace_id String
-  block_id     String
-  page_id      String
-  type         UserBlockType
-
-  User      User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Workspace UserWorkSpaces @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Page      UserPages      @relation(fields: [page_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  updated_at DateTime @updatedAt
-  created_at DateTime @default(now())
-
-  @@map("user_workspace_blocks")
-}
-
-enum UserBlockType {
-  TEXT
-  TITLE
-  LIST
-}
-
-model UserWorkSpaceTasks {
-  id          String         @id @default(uuid())
-  description String
-  task_id     String
-  page_id     String
-  status      UserTaskStatus @default(TODO)
-  expires_at  DateTime
-  updated_at  DateTime       @updatedAt
-  created_at  DateTime       @default(now())
-
-  Page UserPages @relation(fields: [page_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  User User      @relation(fields: [task_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("user_workspace_tasks")
-}
-
-enum UserTaskStatus {
-  TODO
-  PROGRESS
-  COMPLETED
-  HOLD
-}
-
-model UserTable {
+model File {
   id      String @id @default(uuid())
-  name    String
-  page_id String
+  title   String
+  content String
 
-  updated_at DateTime @updatedAt
-  created_at DateTime @default(now())
-
-  Page            UserPages         @relation(fields: [page_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  UserTableColumn UserTableColumn[]
-
-  @@map("user_tables")
-}
-
-model UserTableColumn {
-  id       String @id @default(uuid())
-  name     String
-  table_id String
-
-  updated_at DateTime @updatedAt
-  created_at DateTime @default(now())
-
-  Table         UserTable       @relation(fields: [table_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  UserTableCell UserTableCell[]
-
-  @@map("user_table_columns")
-}
-
-model UserTableCell {
-  id        String @id @default(uuid())
-  content   String
-  column_id String
-
-  updated_at DateTime @updatedAt
-  created_at DateTime @default(now())
-
-  Column UserTableColumn @relation(fields: [column_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("user_table_cells")
+  workspace   Folder @relation(fields: [workSpaceId], references: [id], onDelete: Cascade)
+  workSpaceId String
 }
