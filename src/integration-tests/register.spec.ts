@@ -3,6 +3,7 @@ import * as request from 'supertest';
 import { AuthModule } from '../modules/auth/auth.module';
 import { PrismaService } from '../services/prisma.service';
 import { INestApplication } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('auth register', () => {
   let app: INestApplication;
@@ -10,7 +11,7 @@ describe('auth register', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AuthModule],
+      imports: [EventEmitterModule.forRoot(), AuthModule],
     }).compile();
 
     prisma = moduleRef.get<PrismaService>(PrismaService);

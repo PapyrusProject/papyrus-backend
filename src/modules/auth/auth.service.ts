@@ -4,10 +4,15 @@ import { RegisterDTO } from './RegisterDTO';
 import { LoginDTO } from './LoginDTO';
 import { sign } from 'jsonwebtoken';
 import { PrismaService } from '../../services/prisma.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EmmitedEvents } from '../../interfaces/EmmitedEvents';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmmiter: EventEmitter2,
+  ) {}
 
   async register({ username, email, password }: RegisterDTO) {
     if (!username || !email || !password) {
@@ -44,6 +49,8 @@ export class AuthService {
         updated_at: true,
       },
     });
+
+    this.eventEmmiter.emit(EmmitedEvents.USER_CREATED, user);
 
     return user;
   }

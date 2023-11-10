@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
+    "@nestjs/event-emitter": "^2.0.3",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.2.7",
     "@types/bcrypt": "^5.0.0",
