@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { FolderService } from './folder.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 
-@Controller('folder')
+@Controller({
+  path: 'folder',
+  version: '1',
+})
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 
@@ -12,23 +23,22 @@ export class FolderController {
     return this.folderService.create(createFolderDto);
   }
 
-  @Get()
-  findAll() {
-    return this.folderService.findAll();
+  @Get(':userId')
+  findAll(@Param('userId') userId: string) {
+    return this.folderService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.folderService.findOne(+id);
+  @Patch(':userId/:id')
+  update(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+    @Body() updateFolderDto: UpdateFolderDto,
+  ) {
+    return this.folderService.update(id, updateFolderDto, userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFolderDto: UpdateFolderDto) {
-    return this.folderService.update(+id, updateFolderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.folderService.remove(+id);
+  @Delete(':userId/:id')
+  remove(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.folderService.remove(id, userId);
   }
 }
